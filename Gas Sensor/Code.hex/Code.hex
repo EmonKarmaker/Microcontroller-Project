@@ -1,0 +1,47 @@
+#include <LiquidCrystal.h>
+
+// Initialize the LCD library with pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int gasSensorPin = A0; // MQ-2 sensor connected to A0
+int buzzerPin = 10;    // Buzzer connected to D10
+int gasThreshold = 300; // Threshold for gas detection (adjustable)
+
+void setup() {
+  // Setup LCD
+  lcd.begin(16, 2); // 16x2 LCD
+  lcd.print("Gas Detection...");
+
+  // Setup pins
+  pinMode(gasSensorPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+
+  // Turn off buzzer initially
+  digitalWrite(buzzerPin, LOW);
+
+  delay(2000); // Show welcome message for 2 seconds
+  lcd.clear();
+}
+
+void loop() {
+  int gasValue = analogRead(gasSensorPin); // Read analog value from MQ-2 sensor
+
+  // Display gas sensor data
+  lcd.setCursor(0, 0);
+  lcd.print("Gas Value: ");
+  lcd.print(gasValue);
+
+  if (gasValue > gasThreshold) {
+    // Gas detected
+    lcd.setCursor(0, 1);
+    lcd.print("Gas Detected!");
+    digitalWrite(buzzerPin, HIGH); // Turn on buzzer
+  } else {
+    // No gas detected
+    lcd.setCursor(0, 1);
+    lcd.print("No Gas        "); // Clear old message
+    digitalWrite(buzzerPin, LOW); // Turn off buzzer
+  }
+
+  delay(1000); // Update every second
+}
